@@ -6,3 +6,7 @@ services:
     tty: true
     networks:
       - trigo_exercise_network
+
+  gateway:
+    ports:
+      - "3000:3000"

@@ -20,3 +20,11 @@ Advantages:
     Several unit tests
     Use Docker to Dockerize your applications
     Use Docker Compose to bootstrap the system
+
+
+## How to Run
+
+docker-compose up
+
+## How to test
+./run_tests.sh
