@@ -1,0 +1,28 @@
+version: "3.3"
+services:
+  nats_server:
+    ports:
+      - "4222:4222"
+    image: "nats:latest"
+    networks:
+      - trigo_exercise_network
+
+  gateway:
+    build: "gateway/"
+    ports:
+      - "3000:3000"
+    networks:
+      - trigo_exercise_network
+  
+  math_service:
+    build: "math_service/"
+    networks:
+      - trigo_exercise_network
+  
+  echo_service:
+    build: "echo_service/"
+    networks:
+      - trigo_exercise_network
+
+networks:
+  trigo_exercise_network:

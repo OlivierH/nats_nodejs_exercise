@@ -3,29 +3,44 @@ const app = express()
 const port = 3000
 const { connect, StringCodec } = require("nats");
 
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+} 
+
+async function connectToNatsServer() {
+  try{
+    // to create a connection to a nats-server:
+    return await connect({ servers: "http://nats_server" });
+  } catch (error) {
+    return null;
+  }
+}
+
+async function connectToNatsServerWithRetries() {
+  while(true) {
+    const nc = await connectToNatsServer();
+    if(nc !== null) {
+      return nc;
+    }
+    console.log("Couldn't connect to nats server, waiting 5 seconds before retrying.");
+    await sleep(5000);
+  }
+}
+
+
+
 async function main() {
-// to create a connection to a nats-server:
-const nc = await connect({ servers: "127.0.0.1:4222" });
+const nc = await connectToNatsServerWithRetries();
+
+if(nc === null) {
+  console.error("Error: Couldn't connect to the nats server.");
+  process.exit(1);
+}
 
 // create a codec
 const sc = StringCodec();
-// create a simple subscriber and iterate over messages
-// matching the subscription
-const sub = nc.subscribe("hello");
-(async () => {
-  for await (const m of sub) {
-    console.log(`[${sub.getProcessed()}]: ${sc.decode(m.data)}`);
-  }
-  console.log("subscription closed");
-})();
-
-nc.publish("hello", sc.encode("world"));
-nc.publish("hello", sc.encode("again"));
-
-
-app.get('/', (req, res) => {
-    res.send('Hello World!')
-  })
   
 app.get('/math/substract/:a/:b', (req, res) => {
     const a = req.params.a
@@ -74,12 +89,10 @@ app.get('/math/substract/:a/:b', (req, res) => {
     
   })
 
+  app.listen(port, () => {
+    console.log(`Gateway is up and running at http://localhost:${port}`)
+  })
   
-    
-
-app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`)
-})
 
 }
 

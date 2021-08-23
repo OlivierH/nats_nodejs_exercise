@@ -1,0 +1,15 @@
+{
+  "name": "echo_service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "echo_service.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Olivier Hofman",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1",
+    "nats": "^2.1.0"
+  }
+}
